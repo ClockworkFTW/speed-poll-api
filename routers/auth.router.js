@@ -6,7 +6,7 @@ const authController = require("../controllers/auth.controller");
 
 router.post(
   "/local",
-  passport.authenticate("local", { failureRedirect: "/login" }),
+  passport.authenticate("local", { session: false }),
   authController.local
 );
 
@@ -14,7 +14,7 @@ router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", { session: false }),
   authController.google
 );
 
@@ -25,7 +25,7 @@ router.get(
 
 router.get(
   "/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  passport.authenticate("facebook", { session: false }),
   authController.facebook
 );
 
@@ -33,7 +33,7 @@ router.get("/apple", passport.authenticate("apple"));
 
 router.post(
   "/apple/callback",
-  passport.authenticate("apple", { failureRedirect: "/login" }),
+  passport.authenticate("apple", { session: false }),
   authController.apple
 );
 

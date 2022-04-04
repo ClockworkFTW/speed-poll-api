@@ -2,7 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const session = require("express-session");
 const passport = require("passport");
 
 require("dotenv").config();
@@ -18,11 +17,9 @@ if (process.env.NODE_ENV === "developement") {
 }
 
 // Middlewear
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-app.use(session({ secret: "secret", resave: true, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 require("./passport/config")(passport);
 exports.passport = passport;
 

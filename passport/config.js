@@ -9,21 +9,10 @@ const path = require("path");
 require("dotenv").config();
 
 module.exports = (passport) => {
-  passport.serializeUser((user, done) => {
-    // console.log("serializeUser:", user);
-    return done(null, user);
-  });
-
-  passport.deserializeUser((user, done) => {
-    // console.log("deserializeUser:", user);
-    return done(null, user);
-  });
-
   passport.use(
     new LocalStrategy((username, password, done) => {
-      const user = { username, password };
-      console.log(user);
-      done(null, user);
+      const token = jwt.sign({ username, password }, process.env.JWT_SECRET);
+      done(null, token);
     })
   );
 
@@ -35,8 +24,8 @@ module.exports = (passport) => {
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
       (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
-        done(null, profile);
+        const token = jwt.sign(profile, process.env.JWT_SECRET);
+        done(null, token);
       }
     )
   );
@@ -49,8 +38,8 @@ module.exports = (passport) => {
         callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       },
       (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
-        done(null, profile);
+        const token = jwt.sign(profile, process.env.JWT_SECRET);
+        done(null, token);
       }
     )
   );
@@ -70,8 +59,8 @@ module.exports = (passport) => {
       },
       (req, accessToken, refreshToken, idToken, profile, done) => {
         profile = jwt.decode(idToken);
-        console.log(profile);
-        done(null, profile);
+        const token = jwt.sign(profile, process.env.JWT_SECRET);
+        done(null, token);
       }
     )
   );
