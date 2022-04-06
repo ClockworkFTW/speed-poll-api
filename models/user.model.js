@@ -1,8 +1,16 @@
 const getUserModel = (sequelize, { DataTypes }) => {
   const User = sequelize.define("user", {
-    username: {
+    uuid: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    username: {
+      type: DataTypes.STRING,
+      unique: false,
       allowNull: false,
       validate: {
         notEmpty: true,
@@ -19,7 +27,7 @@ const getUserModel = (sequelize, { DataTypes }) => {
     password: {
       type: DataTypes.STRING,
       unique: false,
-      allowNull: false,
+      allowNull: true,
       validate: {
         notEmpty: true,
       },

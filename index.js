@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const session = require("express-session");
 const passport = require("passport");
 
 require("dotenv").config();
@@ -19,23 +20,18 @@ if (process.env.NODE_ENV === "developement") {
 // Middlewear
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: process.env.APP_URL, credentials: true }));
+app.use(session({ resave: true, saveUninitialized: true, secret: "test" }));
 require("./passport/config")(passport);
 exports.passport = passport;
-
-// Database
-const { models, sequelize } = require("./models");
-
-app.use((req, res, next) => {
-  req.models = models;
-  next();
-});
 
 // Routes
 app.use("/auth", require("./routers/auth.router"));
 app.use("/user", require("./routers/user.router"));
 app.use("/poll", require("./routers/poll.router"));
 
+// Database
+const { sequelize } = require("./models");
 const eraseDatabaseOnSync = true;
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
