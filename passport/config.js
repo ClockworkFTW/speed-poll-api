@@ -4,6 +4,7 @@ const FacebookStrategy = require("passport-facebook");
 const AppleStrategy = require("passport-apple");
 
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const path = require("path");
 
 const { v5: uuidv5 } = require("uuid");
@@ -16,21 +17,33 @@ module.exports = (passport) => {
     new LocalStrategy(
       { usernameField: "email" },
       async (username, password, done) => {
-        // Generate uuid from username (email)
-        const uuid = uuidv5(username, process.env.UUID_NAMESPACE);
+        try {
+          // Generate uuid from username (email)
+          const uuid = uuidv5(username, process.env.UUID_NAMESPACE);
 
-        // Check if user exists
-        const user = await models.User.findOne({ where: { uuid } });
+          // Check if user exists
+          let user = await models.User.findOne({ where: { uuid }, raw: true });
 
-        if (!user) {
-          return done("Incorrect email or password.");
+          if (!user) {
+            return done({ message: "Incorrect email or password" });
+          }
+
+          // Validate password
+          const passwordValidated = await bcrypt.compare(
+            password,
+            user.password
+          );
+
+          if (!passwordValidated) {
+            return done({ message: "Incorrect email or password" });
+          }
+
+          // Return uuid and username
+          user = { uuid: user.uuid, username: user.username };
+          done(null, user);
+        } catch (error) {
+          done({ message: "Could not sign in with email" });
         }
-
-        // TODO: validate password
-
-        // Generate user token and attach to req
-        const token = jwt.sign(user.uuid, process.env.JWT_SECRET);
-        done(null, token);
       }
     )
   );
@@ -44,20 +57,30 @@ module.exports = (passport) => {
         profileFields: ["displayName", "emails"],
       },
       async (accessToken, refreshToken, profile, done) => {
-        // Generate uuid from Google id
-        const { sub, name, email } = profile._json;
-        const uuid = uuidv5(sub, process.env.UUID_NAMESPACE);
+        try {
+          // Generate uuid from Google id
+          const { sub, name, email } = profile._json;
+          const uuid = uuidv5(sub, process.env.UUID_NAMESPACE);
 
-        // Create user if they do not exist
-        const user = await models.User.findOne({ where: { uuid } });
+          // Create user if they do not exist
+          let user = await models.User.findOne({ where: { uuid }, raw: true });
 
-        if (!user) {
-          await models.User.create({ uuid, email, username: name });
+          if (!user) {
+            user = await models.User.create({
+              uuid,
+              email,
+              username: name,
+              source: "google",
+            });
+            user = user.get({ plain: true });
+          }
+
+          // Return uuid and username
+          user = { uuid: user.uuid, username: user.username };
+          done(null, user);
+        } catch (error) {
+          done({ message: "Could not sign in with Google" });
         }
-
-        // Generate user token and attach to req
-        const token = jwt.sign(uuid, process.env.JWT_SECRET);
-        done(null, token);
       }
     )
   );
@@ -71,20 +94,30 @@ module.exports = (passport) => {
         profileFields: ["displayName", "emails"],
       },
       async (accessToken, refreshToken, profile, done) => {
-        // Generate uuid from Facebook id
-        const { id, name, email } = profile._json;
-        const uuid = uuidv5(id, process.env.UUID_NAMESPACE);
+        try {
+          // Generate uuid from Facebook id
+          const { id, name, email } = profile._json;
+          const uuid = uuidv5(id, process.env.UUID_NAMESPACE);
 
-        // Create user if they do not exist
-        const user = await models.User.findOne({ where: { uuid } });
+          // Create user if they do not exist
+          let user = await models.User.findOne({ where: { uuid }, raw: true });
 
-        if (!user) {
-          await models.User.create({ uuid, email, username: name });
+          if (!user) {
+            user = await models.User.create({
+              uuid,
+              email,
+              username: name,
+              source: "facebook",
+            });
+            user = user.get({ plain: true });
+          }
+
+          // Return uuid and username
+          user = { uuid: user.uuid, username: user.username };
+          done(null, user);
+        } catch (error) {
+          done({ message: "Could not sign in with Facebook" });
         }
-
-        // Generate user token and attach to req
-        const token = jwt.sign(uuid, process.env.JWT_SECRET);
-        done(null, token);
       }
     )
   );
@@ -100,23 +133,34 @@ module.exports = (passport) => {
         passReqToCallback: true,
       },
       async (req, accessToken, refreshToken, idToken, profile, done) => {
-        // Decode Apple token
-        profile = jwt.decode(idToken);
+        try {
+          // Decode Apple token
+          profile = jwt.decode(idToken);
 
-        // Generate uuid from Apple id
-        const { sub, email } = profile;
-        const uuid = uuidv5(sub, process.env.UUID_NAMESPACE);
+          // Generate uuid from Apple id
+          const { sub, email } = profile;
+          const username = "apple name"; // TODO: get name from Apple
+          const uuid = uuidv5(sub, process.env.UUID_NAMESPACE);
 
-        // Create user if they do not exist
-        const user = await models.User.findOne({ where: { uuid } });
+          // Create user if they do not exist
+          let user = await models.User.findOne({ where: { uuid }, raw: true });
 
-        if (!user) {
-          await models.User.create({ uuid, email, username: "apple username" });
+          if (!user) {
+            user = await models.User.create({
+              uuid,
+              email,
+              username,
+              source: "apple",
+            });
+            user = user.get({ plain: true });
+          }
+
+          // Return uuid and username
+          user = { uuid: user.uuid, username: user.username };
+          done(null, user);
+        } catch (error) {
+          done({ message: "Could not sign in with Apple" });
         }
-
-        // Generate user token and attach to req
-        const token = jwt.sign(uuid, process.env.JWT_SECRET);
-        done(null, token);
       }
     )
   );

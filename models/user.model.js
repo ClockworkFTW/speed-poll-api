@@ -32,6 +32,14 @@ const getUserModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
+    source: {
+      type: DataTypes.STRING,
+      unique: false,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
   });
 
   User.associate = (models) => {

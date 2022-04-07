@@ -1,22 +1,27 @@
 const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
 
-exports.validateToken = (req, res, next) => {
-  let cookies = req.headers.cookie;
+const { models } = require("../models");
 
-  if (cookies) {
-    cookies = cookie.parse(cookies);
-
-    if (cookies.token) {
-      try {
-        const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
-        // TODO: get user from database and pass to req
-        req.user = { username: "username" };
-      } catch (error) {
-        return res.status(400).json({ error: "invalid token" });
-      }
+exports.validateToken = async (req, res, next) => {
+  try {
+    if (!req.headers.cookie) {
+      return res.status(200).end();
     }
-  }
 
-  next();
+    const { token } = cookie.parse(req.headers.cookie);
+    const uuid = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await models.User.findOne({
+      where: { uuid },
+      attributes: ["uuid", "username"],
+      raw: true,
+    });
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid token" });
+  }
 };

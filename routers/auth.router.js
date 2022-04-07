@@ -3,20 +3,22 @@ const router = express.Router();
 
 const authController = require("../controllers/auth.controller");
 
-router.post("/local/login", authController.localLogin);
+router.post("/local/sign-up", authController.localSignUp);
 
-router.get("/google/login", authController.googleLogin);
+router.post("/local/sign-in", authController.localSignIn);
+
+router.get("/google/sign-in", authController.googleSignIn);
 
 router.get("/google/callback", authController.googleCallback);
 
-router.get("/facebook/login", authController.facebookLogin);
+router.get("/facebook/sign-in", authController.facebookSignIn);
 
 router.get("/facebook/callback", authController.facebookCallback);
 
-router.get("/apple/login", authController.appleLogin);
+router.get("/apple/sign-in", authController.appleSignIn);
 
 router.post("/apple/callback", authController.appleCallback);
 
-router.get("/logout", authController.logout);
+router.get("/sign-out", authController.logout);
 
 module.exports = router;

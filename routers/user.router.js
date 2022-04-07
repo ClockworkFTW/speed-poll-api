@@ -5,6 +5,8 @@ const userController = require("../controllers/user.controller");
 
 const { validateToken } = require("../middleware");
 
-router.get("/", validateToken, userController.getUser);
+router.use(validateToken);
+
+router.get("/", userController.getUser);
 
 module.exports = router;
