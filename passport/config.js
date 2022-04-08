@@ -25,7 +25,7 @@ module.exports = (passport) => {
           let user = await models.User.findOne({ where: { uuid }, raw: true });
 
           if (!user) {
-            return done({ message: "Incorrect email or password" });
+            return done("Incorrect email or password");
           }
 
           // Validate password
@@ -35,14 +35,14 @@ module.exports = (passport) => {
           );
 
           if (!passwordValidated) {
-            return done({ message: "Incorrect email or password" });
+            return done("Incorrect email or password");
           }
 
           // Return uuid and username
           user = { uuid: user.uuid, username: user.username };
           done(null, user);
         } catch (error) {
-          done({ message: "Could not sign in with email" });
+          done("Could not sign in with email");
         }
       }
     )
@@ -79,7 +79,7 @@ module.exports = (passport) => {
           user = { uuid: user.uuid, username: user.username };
           done(null, user);
         } catch (error) {
-          done({ message: "Could not sign in with Google" });
+          done("Could not sign in with Google");
         }
       }
     )
@@ -116,7 +116,7 @@ module.exports = (passport) => {
           user = { uuid: user.uuid, username: user.username };
           done(null, user);
         } catch (error) {
-          done({ message: "Could not sign in with Facebook" });
+          done("Could not sign in with Facebook");
         }
       }
     )
@@ -159,7 +159,7 @@ module.exports = (passport) => {
           user = { uuid: user.uuid, username: user.username };
           done(null, user);
         } catch (error) {
-          done({ message: "Could not sign in with Apple" });
+          done("Could not sign in with Apple");
         }
       }
     )

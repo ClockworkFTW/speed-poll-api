@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { v5: uuidv5 } = require("uuid");
+const queryString = require("query-string");
 
 const { models } = require("../models");
 const { passport } = require("../index");
@@ -75,9 +76,8 @@ exports.googleCallback = (req, res) => {
   passport.authenticate("google", { session: false }, (error, user) => {
     // Redirect with error message
     if (error) {
-      return res.redirect(
-        `${process.env.APP_URL}/sign-in?error=${error.message}`
-      );
+      const qs = queryString.stringify({ error });
+      return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
     }
 
     // Generate jwt and attach to cookie
@@ -89,7 +89,7 @@ exports.googleCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect with jwt cookie
+    // Redirect jwt cookie
     res.redirect(process.env.APP_URL);
   })(req, res);
 };
@@ -102,9 +102,8 @@ exports.facebookCallback = (req, res) => {
   passport.authenticate("facebook", { session: false }, (error, user) => {
     // Redirect with error message
     if (error) {
-      return res.redirect(
-        `${process.env.APP_URL}/sign-in?error=${error.message}`
-      );
+      const qs = queryString.stringify({ error });
+      return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
     }
 
     // Generate jwt and attach to cookie
@@ -116,7 +115,7 @@ exports.facebookCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect with jwt cookie
+    // Redirect jwt cookie
     res.redirect(process.env.APP_URL);
   })(req, res);
 };
@@ -127,9 +126,8 @@ exports.appleCallback = (req, res) => {
   passport.authenticate("apple", { session: false }, (error, user) => {
     // Redirect with error message
     if (error) {
-      return res.redirect(
-        `${process.env.APP_URL}/sign-in?error=${error.message}`
-      );
+      const qs = queryString.stringify({ error });
+      return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
     }
 
     // Generate jwt and attach to cookie
@@ -141,7 +139,7 @@ exports.appleCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect with jwt cookie
+    // Redirect jwt cookie
     res.redirect(process.env.APP_URL);
   })(req, res);
 };
