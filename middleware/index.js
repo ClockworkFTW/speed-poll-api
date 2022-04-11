@@ -22,6 +22,6 @@ exports.validateToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(400).json({ message: "Invalid token" });
+    return res.status(401).json("Invalid token");
   }
 };

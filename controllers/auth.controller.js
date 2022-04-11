@@ -12,7 +12,7 @@ exports.localSignUp = async (req, res) => {
 
     // Validate password
     if (passwordOne !== passwordTwo) {
-      return res.status(400).json({ message: "Passwords do not match" });
+      return res.status(400).json("Passwords do not match");
     }
 
     // Generate uuid and password hash
@@ -43,7 +43,7 @@ exports.localSignUp = async (req, res) => {
     res.json({ user });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Something went wrong" });
+    res.status(400).json("Something went wrong");
   }
 };
 
@@ -89,8 +89,9 @@ exports.googleCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect jwt cookie
-    res.redirect(process.env.APP_URL);
+    // Redirect with user and jwt cookie
+    const qs = queryString.stringify(user);
+    return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };
 
@@ -115,8 +116,9 @@ exports.facebookCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect jwt cookie
-    res.redirect(process.env.APP_URL);
+    // Redirect with user and jwt cookie
+    const qs = queryString.stringify(user);
+    return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };
 
@@ -139,8 +141,9 @@ exports.appleCallback = (req, res) => {
       httpOnly: true,
     });
 
-    // Redirect jwt cookie
-    res.redirect(process.env.APP_URL);
+    // Redirect with user and jwt cookie
+    const qs = queryString.stringify(user);
+    return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };
 
