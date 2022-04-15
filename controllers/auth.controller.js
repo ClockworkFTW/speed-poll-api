@@ -90,7 +90,7 @@ exports.googleCallback = (req, res) => {
     });
 
     // Redirect with user and jwt cookie
-    const qs = queryString.stringify(user);
+    const qs = queryString.stringify({ user: JSON.stringify(user) });
     return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };
@@ -117,7 +117,7 @@ exports.facebookCallback = (req, res) => {
     });
 
     // Redirect with user and jwt cookie
-    const qs = queryString.stringify(user);
+    const qs = queryString.stringify({ user: JSON.stringify(user) });
     return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };
@@ -142,7 +142,7 @@ exports.appleCallback = (req, res) => {
     });
 
     // Redirect with user and jwt cookie
-    const qs = queryString.stringify(user);
+    const qs = queryString.stringify({ user: JSON.stringify(user) });
     return res.redirect(`${process.env.APP_URL}/sign-in?${qs}`);
   })(req, res);
 };

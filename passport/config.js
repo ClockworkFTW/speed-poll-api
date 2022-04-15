@@ -38,8 +38,13 @@ module.exports = (passport) => {
             return done("Incorrect email or password");
           }
 
-          // Return uuid and username
-          user = { uuid: user.uuid, username: user.username };
+          // Return user
+          user = {
+            uuid: user.uuid,
+            username: user.username,
+            source: user.source,
+          };
+
           done(null, user);
         } catch (error) {
           done("Could not sign in with email");
@@ -75,8 +80,13 @@ module.exports = (passport) => {
             user = user.get({ plain: true });
           }
 
-          // Return uuid and username
-          user = { uuid: user.uuid, username: user.username };
+          // Return user
+          user = {
+            uuid: user.uuid,
+            username: user.username,
+            source: user.source,
+          };
+
           done(null, user);
         } catch (error) {
           done("Could not sign in with Google");
@@ -112,8 +122,13 @@ module.exports = (passport) => {
             user = user.get({ plain: true });
           }
 
-          // Return uuid and username
-          user = { uuid: user.uuid, username: user.username };
+          // Return user
+          user = {
+            uuid: user.uuid,
+            username: user.username,
+            source: user.source,
+          };
+
           done(null, user);
         } catch (error) {
           done("Could not sign in with Facebook");
@@ -155,8 +170,13 @@ module.exports = (passport) => {
             user = user.get({ plain: true });
           }
 
-          // Return uuid and username
-          user = { uuid: user.uuid, username: user.username };
+          // Return user
+          user = {
+            uuid: user.uuid,
+            username: user.username,
+            source: user.source,
+          };
+
           done(null, user);
         } catch (error) {
           done("Could not sign in with Apple");
