@@ -2,6 +2,8 @@ const Sequelize = require("sequelize");
 
 const { getUserModel } = require("./user.model");
 const { getPollModel } = require("./poll.model");
+const { getOptionModel } = require("./option.model");
+const { getVoteModel } = require("./vote.model");
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -16,6 +18,8 @@ const sequelize = new Sequelize(
 const models = {
   User: getUserModel(sequelize, Sequelize),
   Poll: getPollModel(sequelize, Sequelize),
+  Option: getOptionModel(sequelize, Sequelize),
+  Vote: getVoteModel(sequelize, Sequelize),
 };
 
 Object.keys(models).forEach((key) => {
@@ -24,4 +28,99 @@ Object.keys(models).forEach((key) => {
   }
 });
 
-module.exports = { models, sequelize };
+// Seed database
+const { v5: uuidv5, v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcrypt");
+const { faker } = require("@faker-js/faker");
+const opentdbService = require("../services/opentdb");
+
+const seed = async () => {
+  // Constants
+  const USER_COUNT = 20;
+  const POLL_COUNT = 50;
+  const VOTE_COUNT = 1000;
+
+  // Create users
+  const users = await Promise.all(
+    [...Array(USER_COUNT)].map(async () => {
+      // Initialize data
+      const firstName = faker.name.firstName();
+      const lastName = faker.name.lastName();
+      const email = faker.internet.email(firstName, lastName);
+      const username = `${firstName} ${lastName}`;
+      const password = await bcrypt.hash(faker.internet.password(), 10);
+      const uuid = uuidv5(email, process.env.UUID_NAMESPACE);
+      const source = "local";
+
+      // Create user
+      const user = await models.User.create({
+        uuid,
+        username,
+        email,
+        password,
+        source,
+      });
+
+      return user;
+    })
+  );
+
+  // Get questions from open trivia database
+  const questions = await opentdbService.getQuestions(POLL_COUNT);
+
+  // Create polls
+  const options = await Promise.all(
+    questions.map(async (question) => {
+      // Initialize data
+      const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
+      const title = question.question;
+      const description = question.category;
+      const createdAt = faker.date.recent(10);
+
+      // Create poll
+      const poll = await models.Poll.create({
+        userId,
+        title,
+        description,
+        createdAt,
+      });
+
+      // Create options
+      const options = await Promise.all(
+        [...question.incorrect_answers, question.correct_answer].map(
+          async (content) => {
+            const option = await models.Option.create({
+              uuid: uuidv4(),
+              pollId: poll.get("id"),
+              content,
+            });
+
+            return option.get();
+          }
+        )
+      );
+
+      return options;
+    })
+  );
+
+  // Create votes
+  await Promise.all(
+    [...Array(VOTE_COUNT)].map(async () => {
+      // Initialize data
+      const optionId =
+        options.flat()[Math.floor(Math.random() * options.flat().length)].id;
+      const ip = faker.internet.ipv4();
+      const country = faker.address.country();
+
+      // Create vote
+      await models.Vote.create({
+        optionId,
+        ip,
+        country,
+      });
+    })
+  );
+};
+
+module.exports = { models, sequelize, seed };

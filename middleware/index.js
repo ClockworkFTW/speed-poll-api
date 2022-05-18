@@ -14,7 +14,7 @@ exports.validateToken = async (req, res, next) => {
 
     const user = await models.User.findOne({
       where: { uuid },
-      attributes: ["uuid", "username"],
+      attributes: ["id", "uuid", "username"],
       raw: true,
     });
 

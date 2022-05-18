@@ -3,6 +3,12 @@ const router = express.Router();
 
 const pollController = require("../controllers/poll.controller");
 
-router.get("/", pollController.getPoll);
+const { validateToken } = require("../middleware");
+
+router.get("/", pollController.getPolls);
+
+router.get("/:pollId", pollController.getPoll);
+
+router.post("/create", validateToken, pollController.createPoll);
 
 module.exports = router;

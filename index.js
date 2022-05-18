@@ -29,12 +29,17 @@ exports.passport = passport;
 app.use("/auth", require("./routers/auth.router"));
 app.use("/user", require("./routers/user.router"));
 app.use("/poll", require("./routers/poll.router"));
+app.use("/vote", require("./routers/vote.router"));
 
 // Database
-const { sequelize } = require("./models");
+const { sequelize, seed } = require("./models");
 const eraseDatabaseOnSync = true;
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+  if (eraseDatabaseOnSync) {
+    await seed();
+  }
+
   app.listen(PORT, () =>
     console.log(`Server running in ${ENV} mode on port ${PORT}`)
   );

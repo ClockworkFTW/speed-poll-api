@@ -1,6 +1,13 @@
 const getPollModel = (sequelize, { DataTypes }) => {
   const Poll = sequelize.define("poll", {
-    question: {
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -11,6 +18,7 @@ const getPollModel = (sequelize, { DataTypes }) => {
 
   Poll.associate = (models) => {
     Poll.belongsTo(models.User);
+    Poll.hasMany(models.Option, { onDelete: "CASCADE" });
   };
 
   return Poll;
