@@ -14,6 +14,13 @@ const getVoteModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
+    countryCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
   });
 
   Vote.associate = (models) => {

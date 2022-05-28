@@ -32,6 +32,7 @@ Object.keys(models).forEach((key) => {
 const { v5: uuidv5, v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
+const countries = require("i18n-iso-countries");
 const opentdbService = require("../services/opentdb");
 
 const seed = async () => {
@@ -111,13 +112,15 @@ const seed = async () => {
       const optionId =
         options.flat()[Math.floor(Math.random() * options.flat().length)].id;
       const ip = faker.internet.ipv4();
-      const country = faker.address.country();
+      const countryCode = faker.address.countryCode();
+      const country = countries.getName(countryCode, "en");
 
       // Create vote
       await models.Vote.create({
         optionId,
         ip,
         country,
+        countryCode,
       });
     })
   );

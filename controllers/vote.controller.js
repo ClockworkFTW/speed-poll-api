@@ -8,11 +8,11 @@ exports.castVote = async (req, res) => {
     const ip = req.clientIp;
     const { uuid } = req.body;
 
-    const { country } = await geolocationService.getLocation(ip);
+    const { country, countryCode } = await geolocationService.getLocation(ip);
 
     const option = await models.Option.findOne({ where: { uuid } });
 
-    await models.Vote.create({ ip, country, optionId: option.id });
+    await models.Vote.create({ ip, country, countryCode, optionId: option.id });
 
     // Retrieve poll with user and options
     const poll = await models.Poll.findOne({
@@ -24,7 +24,11 @@ exports.castVote = async (req, res) => {
           as: "options",
           attributes: ["uuid", "content"],
           include: [
-            { model: models.Vote, as: "votes", attributes: ["country"] },
+            {
+              model: models.Vote,
+              as: "votes",
+              attributes: ["country", "countryCode"],
+            },
           ],
         },
       ],

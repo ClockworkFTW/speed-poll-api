@@ -25,15 +25,20 @@ app.use(session({ resave: true, saveUninitialized: true, secret: "test" }));
 require("./passport/config")(passport);
 exports.passport = passport;
 
+// Database
+const { sequelize, models, seed } = require("./models");
+const eraseDatabaseOnSync = true;
+
+app.use((req, res, next) => {
+  req.models = models;
+  next();
+});
+
 // Routes
 app.use("/auth", require("./routers/auth.router"));
 app.use("/user", require("./routers/user.router"));
 app.use("/poll", require("./routers/poll.router"));
 app.use("/vote", require("./routers/vote.router"));
-
-// Database
-const { sequelize, seed } = require("./models");
-const eraseDatabaseOnSync = true;
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {

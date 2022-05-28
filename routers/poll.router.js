@@ -9,6 +9,8 @@ router.get("/", pollController.getPolls);
 
 router.get("/:pollId", pollController.getPoll);
 
+router.get("/live/:pollId", pollController.getLivePoll);
+
 router.post("/create", validateToken, pollController.createPoll);
 
 module.exports = router;
