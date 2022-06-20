@@ -1,30 +1,27 @@
 const getVoteModel = (sequelize, { DataTypes }) => {
   const Vote = sequelize.define("vote", {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
     ip: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
     country: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
     countryCode: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
   });
 
   Vote.associate = (models) => {
-    Vote.belongsTo(models.Option);
+    Vote.belongsTo(models.Option, { foreignKey: { allowNull: false } });
   };
 
   return Vote;

@@ -74,25 +74,22 @@ const seed = async () => {
     questions.map(async (question) => {
       // Initialize data
       const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
-      const title = question.question;
-      const description = question.category;
       const createdAt = faker.date.recent(10);
 
       // Create poll
       const poll = await models.Poll.create({
         userId,
-        title,
-        description,
         createdAt,
+        question: question.question,
       });
 
       // Create options
       const options = await Promise.all(
         [...question.incorrect_answers, question.correct_answer].map(
-          async (content) => {
+          async (content, index) => {
             const option = await models.Option.create({
-              uuid: uuidv4(),
               pollId: poll.get("id"),
+              index,
               content,
             });
 

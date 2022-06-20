@@ -6,34 +6,16 @@ exports.castVote = async (req, res) => {
   try {
     // Extract request data
     const ip = req.clientIp;
-    const { uuid } = req.body;
+    const { pollId, optionId } = req.body;
 
+    // Get geolocation data from ip address
     const { country, countryCode } = await geolocationService.getLocation(ip);
 
-    const option = await models.Option.findOne({ where: { uuid } });
+    // Create vote
+    await models.Vote.create({ ip, country, countryCode, optionId });
 
-    await models.Vote.create({ ip, country, countryCode, optionId: option.id });
-
-    // Retrieve poll with user and options
-    const poll = await models.Poll.findOne({
-      where: { id: option.pollId },
-      include: [
-        { model: models.User, as: "user", attributes: ["username"] },
-        {
-          model: models.Option,
-          as: "options",
-          attributes: ["uuid", "content"],
-          include: [
-            {
-              model: models.Vote,
-              as: "votes",
-              attributes: ["country", "countryCode"],
-            },
-          ],
-        },
-      ],
-      nest: true,
-    });
+    // Retrieve constructed poll
+    const poll = await models.Poll.getOne(req.models, pollId);
 
     res.json({ poll });
   } catch (error) {

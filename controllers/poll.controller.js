@@ -69,16 +69,22 @@ exports.createPoll = async (req, res) => {
   try {
     // Extract request data
     const userId = req.user.id;
-    const { options, ...rest } = req.body;
+    const { question, options, settings } = req.body;
+    const { setEndDate, endDate, ...otherSettings } = settings;
 
     // Create poll
-    let poll = await models.Poll.create({ ...rest, userId });
+    let poll = await models.Poll.create({
+      ...otherSettings,
+      endDate: setEndDate && endDate,
+      question,
+      userId,
+    });
     const pollId = poll.get("id");
 
     // Create options
     await Promise.all(
-      options.map(async (option) => {
-        await models.Option.create({ ...option, pollId });
+      options.map(async (option, index) => {
+        await models.Option.create({ ...option, index, pollId });
       })
     );
 

@@ -1,34 +1,57 @@
 const getPollModel = (sequelize, { DataTypes }) => {
   const Poll = sequelize.define("poll", {
-    title: {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
+    question: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+    isPrivate: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    multipleVotes: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    enableComments: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    requireAccount: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    hideResults: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    endDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   });
 
   const include = (models, config) => ({
     ...config,
     include: [
-      { model: models.User, as: "user", attributes: ["username"] },
+      { model: models.User, as: "user", attributes: ["id", "username"] },
       {
         model: models.Option,
         as: "options",
-        attributes: ["uuid", "content"],
+        attributes: ["id", "index", "content"],
         include: [
           {
             model: models.Vote,
             as: "votes",
-            attributes: ["country", "countryCode"],
+            attributes: ["country", "countryCode", "createdAt"],
           },
         ],
       },
@@ -37,8 +60,8 @@ const getPollModel = (sequelize, { DataTypes }) => {
   });
 
   Poll.getAll = async (models) => {
-    const poll = await Poll.findAll(include(models, {}));
-    return poll;
+    const polls = await Poll.findAll(include(models, {}));
+    return polls;
   };
 
   Poll.getOne = async (models, id) => {

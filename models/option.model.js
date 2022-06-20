@@ -1,11 +1,14 @@
 const getOptionModel = (sequelize, { DataTypes }) => {
   const Option = sequelize.define("option", {
-    uuid: {
-      type: DataTypes.STRING,
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      primaryKey: true,
+    },
+    index: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     content: {
       type: DataTypes.STRING,
@@ -17,7 +20,10 @@ const getOptionModel = (sequelize, { DataTypes }) => {
   });
 
   Option.associate = (models) => {
-    Option.hasMany(models.Vote, { onDelete: "CASCADE" });
+    Option.hasMany(models.Vote, {
+      onDelete: "CASCADE",
+      foreignKey: { allowNull: false },
+    });
     Option.belongsTo(models.Poll);
   };
 
