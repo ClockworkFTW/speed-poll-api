@@ -13,23 +13,27 @@ const getPollModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
-    isPrivate: {
+    privatePoll: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    multipleVotes: {
+    allowMultipleVotes: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    enableComments: {
+    addComments: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    requireAccount: {
+    loginToVote: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
     hideResults: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    enableCaptcha: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },

@@ -42,7 +42,7 @@ app.use("/vote", require("./routers/vote.router"));
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {
-    // await seed();
+    await seed();
   }
 
   app.listen(PORT, () =>

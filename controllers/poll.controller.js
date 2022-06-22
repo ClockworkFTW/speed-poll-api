@@ -75,7 +75,7 @@ exports.createPoll = async (req, res) => {
     // Create poll
     let poll = await models.Poll.create({
       ...otherSettings,
-      endDate: setEndDate && endDate,
+      endDate: setEndDate ? endDate : null,
       question,
       userId,
     });

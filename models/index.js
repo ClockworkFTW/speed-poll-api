@@ -35,6 +35,25 @@ const { faker } = require("@faker-js/faker");
 const countries = require("i18n-iso-countries");
 const opentdbService = require("../services/opentdb");
 
+const colors = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+];
+
 const seed = async () => {
   // Constants
   const USER_COUNT = 20;
@@ -91,6 +110,7 @@ const seed = async () => {
               pollId: poll.get("id"),
               index,
               content,
+              color: colors[Math.floor(Math.random() * colors.length)],
             });
 
             return option.get();
