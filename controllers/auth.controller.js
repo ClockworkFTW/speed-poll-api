@@ -42,7 +42,7 @@ exports.localSignUp = async (req, res) => {
     // Respond with user and jwt cookie
     res.json({ user });
   } catch (error) {
-    console.log(error);
+    console.log("localSignUp", error.name);
     res.status(400).json("Something went wrong");
   }
 };

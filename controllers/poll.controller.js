@@ -6,7 +6,7 @@ exports.getPolls = async (req, res) => {
 
     res.json({ polls });
   } catch (error) {
-    console.log(error);
+    console.log("getPolls", error.name);
     res.status(400).json("Could not get polls.");
   }
 };
@@ -33,7 +33,7 @@ exports.getPoll = async (req, res) => {
 
     res.json({ poll });
   } catch (error) {
-    console.log(error);
+    console.log("getPoll", error.name);
     res.status(400).json("Could not get poll.");
   }
 };
@@ -72,7 +72,7 @@ exports.getLivePoll = async (req, res) => {
       res.end();
     });
   } catch (error) {
-    console.log(error);
+    console.log("getLivePoll", error.name);
     res.status(400).json("Could not get poll.");
   }
 };
@@ -105,7 +105,7 @@ exports.createPoll = async (req, res) => {
 
     res.json({ poll });
   } catch (error) {
-    console.log(error);
+    console.log("createPoll", error.name);
     res.status(400).json("Could not create poll.");
   }
 };

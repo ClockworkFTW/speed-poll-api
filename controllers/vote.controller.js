@@ -8,6 +8,11 @@ exports.castVotes = async (req, res) => {
     const ip = req.clientIp;
     const { pollId, votes } = req.body;
 
+    // Check to make sure option was selected
+    if (votes.length === 0) {
+      return res.status(400).json("Please select an option.");
+    }
+
     // Get geolocation data from ip address
     const { country, countryCode } = await geolocationService.getLocation(ip);
 
@@ -24,7 +29,7 @@ exports.castVotes = async (req, res) => {
 
     res.json({ poll });
   } catch (error) {
-    console.log(error);
+    console.log("castVotes", error.name);
     res.status(400).json("Could not cast vote.");
   }
 };
