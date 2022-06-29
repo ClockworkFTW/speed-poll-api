@@ -14,6 +14,12 @@ const sequelize = new Sequelize(
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
     dialect: "postgres",
+    dialectOptions: process.env.NODE_ENV === "production" && {
+      ssl: {
+        require: true,
+        ca: process.env.DATABASE_CA_CERT,
+      },
+    },
     logging: false,
   }
 );
@@ -33,7 +39,7 @@ Object.keys(models).forEach((key) => {
 });
 
 // Seed database
-const { v5: uuidv5, v4: uuidv4 } = require("uuid");
+const { v5: uuidv5 } = require("uuid");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
 const countries = require("i18n-iso-countries");
