@@ -7,10 +7,11 @@ const passport = require("passport");
 
 require("dotenv").config();
 
-const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 3005;
 
 const app = express();
+
+console.log(process.env.DATABASE_PASSWORD);
 
 // Logging
 if (process.env.NODE_ENV === "developement") {
