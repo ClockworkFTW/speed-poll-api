@@ -50,7 +50,7 @@ const getPollModel = (sequelize, { DataTypes }) => {
       {
         model: models.Option,
         as: "options",
-        attributes: ["id", "index", "content"],
+        attributes: ["id", "index", "content", "color"],
         include: [
           {
             model: models.Vote,

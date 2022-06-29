@@ -5,6 +5,6 @@ const requestIp = require("request-ip");
 
 const voteController = require("../controllers/vote.controller");
 
-router.post("/cast", requestIp.mw(), voteController.castVote);
+router.post("/cast", requestIp.mw(), voteController.castVotes);
 
 module.exports = router;
