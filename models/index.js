@@ -17,6 +17,7 @@ const sequelize = new Sequelize(
     dialectOptions: process.env.NODE_ENV === "production" && {
       ssl: {
         require: true,
+        rejectUnauthorized: false,
         ca: process.env.DATABASE_CA_CERT,
       },
     },
