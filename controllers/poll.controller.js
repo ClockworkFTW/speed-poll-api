@@ -13,7 +13,19 @@ exports.getPolls = async (req, res) => {
 
 exports.getPoll = async (req, res) => {
   try {
-    const poll = await models.Poll.getOne(req.models, req.params.pollId);
+    // Extract request data
+    const { pollId } = req.params;
+    const ip = req.clientIp;
+
+    // Create view
+    const views = await models.View.findAll({ where: { pollId }, raw: true });
+
+    if (!views.find((view) => view.ip === ip)) {
+      await models.View.create({ ip, pollId });
+    }
+
+    // Get poll
+    const poll = await models.Poll.getOne(req.models, pollId);
 
     if (!poll) {
       return res.status(400).json("Poll not found.");

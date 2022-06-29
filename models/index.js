@@ -4,6 +4,7 @@ const { getUserModel } = require("./user.model");
 const { getPollModel } = require("./poll.model");
 const { getOptionModel } = require("./option.model");
 const { getVoteModel } = require("./vote.model");
+const { getViewModel } = require("./view.model");
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -20,6 +21,7 @@ const models = {
   Poll: getPollModel(sequelize, Sequelize),
   Option: getOptionModel(sequelize, Sequelize),
   Vote: getVoteModel(sequelize, Sequelize),
+  View: getViewModel(sequelize, Sequelize),
 };
 
 Object.keys(models).forEach((key) => {

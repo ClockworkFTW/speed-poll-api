@@ -59,6 +59,7 @@ const getPollModel = (sequelize, { DataTypes }) => {
           },
         ],
       },
+      { model: models.View, as: "views", attributes: ["ip"] },
     ],
     nest: true,
   });
@@ -76,6 +77,10 @@ const getPollModel = (sequelize, { DataTypes }) => {
   Poll.associate = (models) => {
     Poll.belongsTo(models.User);
     Poll.hasMany(models.Option, { onDelete: "CASCADE" });
+    Poll.hasMany(models.View, {
+      onDelete: "CASCADE",
+      foreignKey: { allowNull: false },
+    });
   };
 
   return Poll;
