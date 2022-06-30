@@ -60,6 +60,16 @@ const getPollModel = (sequelize, { DataTypes }) => {
         ],
       },
       { model: models.View, as: "views", attributes: ["ip"] },
+      {
+        model: models.Comment,
+        as: "comments",
+        attributes: ["id", "text", "createdAt", "parentId", "childId"],
+        include: {
+          model: models.User,
+          as: "user",
+          attributes: ["id", "username"],
+        },
+      },
     ],
     nest: true,
   });
@@ -77,6 +87,7 @@ const getPollModel = (sequelize, { DataTypes }) => {
   Poll.associate = (models) => {
     Poll.belongsTo(models.User);
     Poll.hasMany(models.Option, { onDelete: "CASCADE" });
+    Poll.hasMany(models.Comment, { onDelete: "CASCADE" });
     Poll.hasMany(models.View, {
       onDelete: "CASCADE",
       foreignKey: { allowNull: false },

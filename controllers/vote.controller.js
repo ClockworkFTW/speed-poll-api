@@ -2,7 +2,7 @@ const { models } = require("../models");
 
 const geolocationService = require("../services/geolocation");
 
-exports.castVotes = async (req, res) => {
+exports.createVote = async (req, res) => {
   try {
     // Extract request data
     const ip = req.clientIp;
@@ -29,7 +29,7 @@ exports.castVotes = async (req, res) => {
 
     res.json({ poll });
   } catch (error) {
-    console.log("castVotes", error.name);
+    console.log("createVote", error.name);
     res.status(400).json("Could not cast vote.");
   }
 };

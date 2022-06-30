@@ -26,7 +26,8 @@ require("./passport/config")(passport);
 exports.passport = passport;
 
 // Database
-const { sequelize, models, seed } = require("./models");
+const { sequelize, models } = require("./models");
+const seed = require("./models/seed");
 const eraseDatabaseOnSync = true;
 
 app.use((req, res, next) => {
@@ -39,6 +40,7 @@ app.use("/auth", require("./routers/auth.router"));
 app.use("/user", require("./routers/user.router"));
 app.use("/poll", require("./routers/poll.router"));
 app.use("/vote", require("./routers/vote.router"));
+app.use("/comment", require("./routers/comment.router"));
 
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {
