@@ -10,6 +10,7 @@ const { models } = require("../models");
 const USER_COUNT = 20;
 const POLL_COUNT = 50;
 const VOTE_COUNT = 1000;
+const VIEW_COUNT = 100;
 
 const colors = [
   "red",
@@ -61,22 +62,36 @@ module.exports = async () => {
 
   // Create polls
   const polls = await Promise.all(
-    questions.map(async (question) => {
+    questions.map(async ({ question, incorrect_answers, correct_answer }) => {
       // Initialize data
       const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
-      const createdAt = faker.date.recent(10);
+      const createdAt = faker.date.recent(30);
+      let endDate = faker.date.between(createdAt, faker.date.soon(10));
+
+      // Poll settings
+      const privatePoll = Math.random() < 0.5;
+      const allowMultipleVotes = Math.random() < 0.5;
+      const addComments = Math.random() < 0.5;
+      const loginToVote = Math.random() < 0.5;
+      const hideResults = Math.random() < 0.5;
+      const enableCaptcha = Math.random() < 0.5;
+      endDate = Math.random() < 0.5 ? endDate : null;
 
       // Create poll
       const poll = await models.Poll.create({
         userId,
         createdAt,
-        question: question.question,
+        question,
+        privatePoll,
+        allowMultipleVotes,
+        addComments,
+        loginToVote,
+        hideResults,
+        enableCaptcha,
+        endDate,
       });
 
-      return {
-        ...poll.get(),
-        options: [...question.incorrect_answers, question.correct_answer],
-      };
+      return { ...poll.get(), options: [...incorrect_answers, correct_answer] };
     })
   );
 
@@ -116,6 +131,24 @@ module.exports = async () => {
         country,
         countryCode,
       });
+    })
+  );
+
+  // Create views
+  await Promise.all(
+    polls.map(async (poll) => {
+      await Promise.all(
+        [...Array(Math.floor(Math.random() * VIEW_COUNT))].map(async () => {
+          // Initialize data
+          const pollId = poll.id;
+          const ip = faker.internet.ipv4();
+          const countryCode = faker.address.countryCode();
+          const country = countries.getName(countryCode, "en");
+
+          // Create view
+          await models.View.create({ pollId, ip, countryCode, country });
+        })
+      );
     })
   );
 
