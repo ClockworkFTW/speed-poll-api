@@ -10,7 +10,7 @@ const { models } = require("../models");
 const USER_COUNT = 20;
 const POLL_COUNT = 50;
 const VOTE_COUNT = 1000;
-const VIEW_COUNT = 100;
+const VIEW_COUNT = 30;
 
 const colors = [
   "red",
