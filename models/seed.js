@@ -65,21 +65,27 @@ module.exports = async () => {
     questions.map(async ({ question, incorrect_answers, correct_answer }) => {
       // Initialize data
       const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
+      const ip = faker.internet.ipv4();
+      const countryCode = faker.address.countryCode();
+      const country = countries.getName(countryCode, "en");
       const createdAt = faker.date.recent(30);
       let endDate = faker.date.between(createdAt, faker.date.soon(10));
 
       // Poll settings
-      const privatePoll = Math.random() < 0.5;
+      const privatePoll = Math.random() < 0.25;
       const allowMultipleVotes = Math.random() < 0.5;
-      const addComments = Math.random() < 0.5;
       const loginToVote = Math.random() < 0.5;
-      const hideResults = Math.random() < 0.5;
       const enableCaptcha = Math.random() < 0.5;
+      const hideResults = Math.random() < 0.25;
+      const addComments = hideResults ? false : Math.random() < 0.75;
       endDate = Math.random() < 0.5 ? endDate : null;
 
       // Create poll
       const poll = await models.Poll.create({
         userId,
+        ip,
+        countryCode,
+        country,
         createdAt,
         question,
         privatePoll,
@@ -154,28 +160,30 @@ module.exports = async () => {
 
   // Create comments
   const comments = await Promise.all(
-    polls.map(async (poll) => {
-      const comments = await Promise.all(
-        [...Array(Math.floor(Math.random() * 5))].map(async () => {
-          // Initialize data
-          const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
-          const createdAt = faker.date.recent(10);
-          const text = faker.lorem.sentence();
+    polls
+      .filter((poll) => poll.addComments)
+      .map(async (poll) => {
+        const comments = await Promise.all(
+          [...Array(Math.floor(Math.random() * 5))].map(async () => {
+            // Initialize data
+            const userId = users[Math.floor(Math.random() * USER_COUNT)].id;
+            const createdAt = faker.date.recent(10);
+            const text = faker.lorem.sentence();
 
-          // Create comment
-          const comment = await models.Comment.create({
-            pollId: poll.id,
-            userId,
-            createdAt,
-            text,
-          });
+            // Create comment
+            const comment = await models.Comment.create({
+              pollId: poll.id,
+              userId,
+              createdAt,
+              text,
+            });
 
-          return comment.get();
-        })
-      );
+            return comment.get();
+          })
+        );
 
-      return comments;
-    })
+        return comments;
+      })
   );
 
   // Create child comments

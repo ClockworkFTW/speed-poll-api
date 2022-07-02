@@ -1,5 +1,7 @@
 const { models } = require("../models");
 
+const geolocationService = require("../services/geolocation");
+
 exports.getPolls = async (req, res) => {
   try {
     const polls = await models.Poll.getAll(req.models);
@@ -21,7 +23,8 @@ exports.getPoll = async (req, res) => {
     const views = await models.View.findAll({ where: { pollId }, raw: true });
 
     if (!views.find((view) => view.ip === ip)) {
-      await models.View.create({ ip, pollId });
+      const { country, countryCode } = await geolocationService.getLocation(ip);
+      await models.View.create({ pollId, ip, country, countryCode });
     }
 
     // Get poll

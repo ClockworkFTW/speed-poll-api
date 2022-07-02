@@ -10,6 +10,14 @@ const getViewModel = (sequelize, { DataTypes }) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    countryCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
 
   View.associate = (models) => {

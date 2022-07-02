@@ -13,6 +13,18 @@ const getPollModel = (sequelize, { DataTypes }) => {
         notEmpty: true,
       },
     },
+    ip: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    countryCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     privatePoll: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
