@@ -73,7 +73,8 @@ module.exports = async () => {
 
       // Poll settings
       const privatePoll = Math.random() < 0.25;
-      const allowMultipleVotes = Math.random() < 0.5;
+      const preventDuplicateVoting = Math.random() < 0.5;
+      const multipleChoice = Math.random() < 0.5;
       const loginToVote = Math.random() < 0.5;
       const enableCaptcha = Math.random() < 0.5;
       const hideResults = Math.random() < 0.25;
@@ -89,7 +90,8 @@ module.exports = async () => {
         createdAt,
         question,
         privatePoll,
-        allowMultipleVotes,
+        preventDuplicateVoting,
+        multipleChoice,
         addComments,
         loginToVote,
         hideResults,

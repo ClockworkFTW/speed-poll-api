@@ -12,6 +12,10 @@ router.get("/:pollId", requestIp.mw(), pollController.getPoll);
 
 router.get("/live/:pollId", pollController.getLivePoll);
 
-router.post("/create", validateToken, pollController.createPoll);
+router.post(
+  "/create",
+  [validateToken, requestIp.mw()],
+  pollController.createPoll
+);
 
 module.exports = router;

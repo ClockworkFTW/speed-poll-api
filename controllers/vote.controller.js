@@ -16,6 +16,16 @@ exports.createVote = async (req, res) => {
     // Get geolocation data from ip address
     const { country, countryCode } = await geolocationService.getLocation(ip);
 
+    // Check for duplicate voting
+    let poll = await models.Poll.getOne(req.models, pollId);
+
+    const existingVotes = poll.options.map((option) => option.votes).flat();
+    const duplicateVote = existingVotes.find((vote) => vote.ip === ip);
+
+    if (poll.preventDuplicateVoting && duplicateVote) {
+      return res.status(400).json("You have already voted on this poll.");
+    }
+
     // Create votes
     await Promise.all(
       votes.map(
@@ -25,11 +35,11 @@ exports.createVote = async (req, res) => {
     );
 
     // Retrieve constructed poll
-    const poll = await models.Poll.getOne(req.models, pollId);
+    poll = await models.Poll.getOne(req.models, pollId);
 
     res.json({ poll });
   } catch (error) {
-    console.log("createVote", error.name);
+    console.log("createVote", error);
     res.status(400).json("Could not cast vote.");
   }
 };

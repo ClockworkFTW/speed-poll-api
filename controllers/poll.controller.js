@@ -87,12 +87,19 @@ exports.createPoll = async (req, res) => {
     const { question, options, settings } = req.body;
     const { setEndDate, endDate, ...otherSettings } = settings;
 
+    // Get location data
+    const ip = req.clientIp;
+    const { country, countryCode } = await geolocationService.getLocation(ip);
+
     // Create poll
     let poll = await models.Poll.create({
       ...otherSettings,
-      endDate: setEndDate ? endDate : null,
       question,
       userId,
+      ip,
+      country,
+      countryCode,
+      endDate: setEndDate ? endDate : null,
     });
     const pollId = poll.get("id");
 

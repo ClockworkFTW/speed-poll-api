@@ -29,7 +29,11 @@ const getPollModel = (sequelize, { DataTypes }) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    allowMultipleVotes: {
+    multipleChoice: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    preventDuplicateVoting: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
@@ -67,7 +71,7 @@ const getPollModel = (sequelize, { DataTypes }) => {
           {
             model: models.Vote,
             as: "votes",
-            attributes: ["country", "countryCode", "createdAt"],
+            attributes: ["ip", "country", "countryCode", "createdAt"],
           },
         ],
       },
